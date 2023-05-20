@@ -11,19 +11,17 @@ public class Map {
     public static TextAttributes Green = new TextAttributes(Color.GREEN);
     public static TextAttributes Magenta = new TextAttributes(Color.MAGENTA);
     public static Random random = new Random();
-    public static long seed=0;
+    public static Random random_seed = new Random();
+    public static long seed;
     public static char[][] map;
 
-    private void create_seed(){
-        seed=random.nextLong(0,10000);
-        random.setSeed(seed);
-    }
     private void create(int howMany, char what) {
         int count = 0;
         int x, y;
         if(seed==0){
-           create_seed();
+            seed=random_seed.nextLong(0,10000);
         }
+        random.setSeed(seed);
         while (count < howMany) {
             x = random.nextInt(0,31);
             y = random.nextInt(0,20);
