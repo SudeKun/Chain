@@ -29,10 +29,19 @@ Game() throws Exception {
    };
    cn.getTextWindow().addKeyListener(klis);
    // ----------------------------------------------------
+
+   /*cn.getTextWindow().output("Do you want to enter a seed?");
+   if(keypr == 1){
+      if(rkey==KeyEvent.VK_Y){
+         while(rkey!=KeyEvent.VK_ENTER) {
+
+            Map.seed;
+         }
+      }
+      keypr=0;
+   }*/
+
    char[][] map = Map.map;
-   int px=1,py=0;
-   map[py][px]='|';
-   cn.getTextWindow().output(px, py, '|');
    int round=0;
    cn.getTextWindow().setCursorPosition(35,0);
    cn.getTextWindow().output("Board Seed: "+Map.seed);
@@ -44,6 +53,10 @@ Game() throws Exception {
    cn.getTextWindow().output("---------------------------------------");
    cn.getTextWindow().setCursorPosition(35,4);
    cn.getTextWindow().output("Table: ");
+
+   int px=1,py=0;
+   map[py][px]='|';
+   cn.getTextWindow().output(px, py, '|');
    boolean gameover=false;
    while(!gameover) {
       if (keypr == 1) {    // if keyboard button pressed
@@ -94,6 +107,7 @@ Game() throws Exception {
             }
             py++;
          }
+         //Add +
          if (rkey == KeyEvent.VK_SPACE) {
             if (map[py][px] == '+') {
                cn.getTextWindow().output(px, py, ' ');
@@ -135,10 +149,12 @@ Game() throws Exception {
          if(map[py][px]=='+') {
             cn.getTextWindow().output(px, py, '|');
          }
-         else {
+         else{
             map[py][px] = '|';
             cn.getTextWindow().output(px, py, '|');
          }
+
+
          keypr = 0;    // last action
       }
       Thread.sleep(20);
