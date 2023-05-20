@@ -29,21 +29,7 @@ Game() throws Exception {
    };
    cn.getTextWindow().addKeyListener(klis);
    // ----------------------------------------------------
-
-   /*cn.getTextWindow().output("Do you want to enter a seed?");
-   if(keypr == 1){
-      if(rkey==KeyEvent.VK_Y){
-         while(rkey!=KeyEvent.VK_ENTER) {
-
-            Map.seed;
-         }
-      }
-      keypr=0;
-   }*/
-
    char[][] map = Map.map;
-
-
    int px=1,py=0;
    map[py][px]='|';
    cn.getTextWindow().output(px, py, '|');
@@ -65,23 +51,6 @@ Game() throws Exception {
             map[py][px] = ' ';
             cn.getTextWindow().output(px, py, ' ');
          }
-         //Can be deleted
-         /*else if(map[py][px]=='1') {
-            map[py][px]='1';
-            cn.getTextWindow().output(px,py,'1');
-         }
-         else if(map[py][px]=='2') {
-            map[py][px]='2';
-            cn.getTextWindow().output(px,py,'2');
-         }
-         else if(map[py][px]=='3') {
-            map[py][px]='3';
-            cn.getTextWindow().output(px,py,'3');
-         }
-         else if(map[py][px]=='4') {
-            map[py][px]='4';
-            cn.getTextWindow().output(px,py,'4');
-         }*/
          else if(map[py][px]=='+'){
             map[py][px]='+';
             cn.getTextWindow().output(px,py,'+',Red);
@@ -166,12 +135,10 @@ Game() throws Exception {
          if(map[py][px]=='+') {
             cn.getTextWindow().output(px, py, '|');
          }
-         else{
+         else {
             map[py][px] = '|';
             cn.getTextWindow().output(px, py, '|');
          }
-
-
          keypr = 0;    // last action
       }
       Thread.sleep(20);
