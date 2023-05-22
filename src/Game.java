@@ -18,6 +18,7 @@ public class Game {
     static SingleLinkedList chain = new SingleLinkedList();
 
     boolean gameover=false;
+    public int score=0;
 
     Game() throws Exception {
         klis=new KeyListener() {
@@ -51,7 +52,7 @@ public class Game {
         cn.getTextWindow().setCursorPosition(35,1);
         cn.getTextWindow().output("Round: "+round);
         cn.getTextWindow().setCursorPosition(35,2);
-        cn.getTextWindow().output("Score: ");
+        cn.getTextWindow().output("Score: "+score);
         cn.getTextWindow().setCursorPosition(35,3);
         cn.getTextWindow().output("---------------------------------------");
         cn.getTextWindow().setCursorPosition(35,4);
@@ -170,23 +171,27 @@ public class Game {
             Thread.sleep(20);
         }
     }
+    public int plusCounter;
 
     private void newRound() {
 
         if (controlChain()){
             // add to table
+            score();
             updateBoard();
             chain.setHead(null); //resetting head
         }
         else{
             gameover = true;
-            cn.getTextWindow().setCursorPosition(40,15);
-            cn.getTextWindow().output("Error in chain \n                                     - Game Over - ");
+            cn.getTextWindow().setCursorPosition(10,24);
+            cn.getTextWindow().output("Error in chain");
+            cn.getTextWindow().setCursorPosition(10,25);
+            cn.getTextWindow().output("- Game Over -");
         }
     }
     boolean controlChain(){
         boolean flag = true;
-        int plusCounter = 0;
+        plusCounter = 0;
         Node temp = chain.getHead(); // {x,y}
 
         // for more than 1 plus
@@ -295,7 +300,6 @@ public class Game {
             count++;
         if (x + 1 < 31 && map[y][x + 1] == '+')   //right
             count++;
-
         return count;
     }
     public void removePlus(int[] position) {
@@ -323,7 +327,13 @@ public class Game {
         }
         chain = tempSLL;
     }
-
+    public void score(){
+        if(plusCounter==1){
+            score+= ( (chain.size()+1)*(chain.size()+1) );
+            cn.getTextWindow().setCursorPosition(35,2);
+            cn.getTextWindow().output("Score: "+score);
+        }
+    }
 }
 
 

@@ -35,7 +35,7 @@ public class SingleLinkedList{
         Node previous = null;
         while(temp != null) {
             if(temp.getData() == dataToDelete) {
-                System.out.println("DKŞLASCMFŞASLMASŞFASD");
+                System.out.println(" ");
                 if(previous == null) { // the matching node is the first node
                     head = temp.getLink();
                 } else {
