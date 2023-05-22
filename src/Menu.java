@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Menu {
-    public enigma.console.Console cn = Enigma.getConsole("Chain");
+    public enigma.console.Console cn = Enigma.getConsole("Chain",100,40,25,15);
     public TextMouseListener tmlis;
     public KeyListener klis;
 
