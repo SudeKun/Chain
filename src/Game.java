@@ -5,7 +5,7 @@ import enigma.console.TextAttributes;
 import java.awt.Color;
 
 public class Game {
-    public enigma.console.Console cn = Enigma.getConsole("Chain",100,40,25,15);
+    public enigma.console.Console cn = Enigma.getConsole("Chain",100,40,22,15);
     public static TextAttributes Red = new TextAttributes(Color.RED);
     public KeyListener klis;
 
@@ -19,6 +19,7 @@ public class Game {
 
     boolean gameover=false;
     public int score=0;
+    public int plusCounter;
 
     Game() throws Exception {
         klis=new KeyListener() {
@@ -52,7 +53,7 @@ public class Game {
         cn.getTextWindow().setCursorPosition(35,1);
         cn.getTextWindow().output("Round: "+round);
         cn.getTextWindow().setCursorPosition(35,2);
-        cn.getTextWindow().output("Score: "+score);
+        cn.getTextWindow().output("Score: "+ score);
         cn.getTextWindow().setCursorPosition(35,3);
         cn.getTextWindow().output("---------------------------------------");
         cn.getTextWindow().setCursorPosition(35,4);
@@ -111,7 +112,6 @@ public class Game {
                     }
                     y++;
                 }
-
                 //Add +
                 if (rkey == KeyEvent.VK_SPACE) {
                     if (map[y][x] == '+') {
@@ -127,7 +127,6 @@ public class Game {
                         chain.add(position);
                     }
                 }
-
                 //Enter
                 if (rkey == KeyEvent.VK_ENTER){
                     round++;
@@ -135,7 +134,6 @@ public class Game {
                     cn.getTextWindow().output("Round: "+round);
                     newRound();
                 }
-
                 //Quit
                 if (rkey == KeyEvent.VK_E) {
                     for(int i=0;i<31;i++){
@@ -157,22 +155,18 @@ public class Game {
                 }
 
                 //Output for +
-                if(map[y][x]=='+') {
+                if(map[y][x]=='+'){
                     cn.getTextWindow().output(x, y, '|');
                 }
                 else{
                     map[y][x] = '|';
                     cn.getTextWindow().output(x, y, '|');
                 }
-
-
                 keypr = 0;    // last action
             }
-            Thread.sleep(20);
+            Thread.sleep(200);
         }
     }
-    public int plusCounter;
-
     private void newRound() {
 
         if (controlChain()){
@@ -334,6 +328,7 @@ public class Game {
             cn.getTextWindow().output("Score: "+score);
         }
     }
+
 }
 
 

@@ -4,7 +4,7 @@ import java.util.Random;
 import java.awt.*;
 
 public class Map {
-    public static enigma.console.Console cn = Enigma.getConsole("Chain",100,40,25,15);
+    public static enigma.console.Console cn = Enigma.getConsole("Chain",100,40,22,15);
     public static TextAttributes White = new TextAttributes(Color.WHITE);
     public static TextAttributes Orange = new TextAttributes(Color.ORANGE);
     public static TextAttributes Cyan = new TextAttributes(Color.CYAN);
