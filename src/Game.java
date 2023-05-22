@@ -1,49 +1,24 @@
 import enigma.core.Enigma;
-import enigma.event.TextMouseEvent;
-import enigma.event.TextMouseListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Arrays;
-import java.util.Random;
+import enigma.console.TextAttributes;
+import java.awt.Color;
 
 public class Game {
-    public static enigma.console.Console cn = Enigma.getConsole("Chain",100,40,25,15);
-    public TextMouseListener tmlis;
+    public enigma.console.Console cn = Enigma.getConsole("Chain");
+    public static TextAttributes Red = new TextAttributes(Color.RED);
     public KeyListener klis;
 
     // ------ Standard variables for mouse and keyboard ------
-    public int mousepr;          // mouse pressed?
-    public int mousex, mousey;   // mouse text coords.
     public int keypr;   // key pressed?
     public int rkey;    // key   (for press/release)
-    // ----------------------------------------------------
+// ----------------------------------------------------
 
 
-
-
-    public static char[][] map = new char[19][31];
-    static SingleLinkedList chain = new SingleLinkedList();
-
-    boolean gameover = false;
-
-    Game() throws Exception {   // --- Contructor
-
-        // ------ Standard code for mouse and keyboard ------ Do not change
-        tmlis=new TextMouseListener() {
-            public void mouseClicked(TextMouseEvent arg0) {}
-            public void mousePressed(TextMouseEvent arg0) {
-                if(mousepr==0) {
-                    mousepr=1;
-                    mousex=arg0.getX();
-                    mousey=arg0.getY();
-                }
-            }
-            public void mouseReleased(TextMouseEvent arg0) {}
-        };
-        cn.getTextWindow().addTextMouseListener(tmlis);
-
+    Game() throws Exception {
         klis=new KeyListener() {
-            public void keyTyped(KeyEvent e) {}
+            public void keyTyped(KeyEvent e) {
+            }
             public void keyPressed(KeyEvent e) {
                 if(keypr==0) {
                     keypr=1;
@@ -53,61 +28,22 @@ public class Game {
             public void keyReleased(KeyEvent e) {}
         };
         cn.getTextWindow().addKeyListener(klis);
-// ----------------------------------------------------
+        // ----------------------------------------------------
 
+   /*cn.getTextWindow().output("Do you want to enter a seed?");
+   if(keypr == 1){
+      if(rkey==KeyEvent.VK_Y){
+         while(rkey!=KeyEvent.VK_ENTER) {
+            Map.seed;
+         }
+      }
+      keypr=0;
+   }*/
 
-        /*
-        cn.getTextWindow().setCursorPosition(0,0);
-        cn.getTextWindow().output("Welcome to Chain Game!");
-        cn.getTextWindow().setCursorPosition(0,1);
-        cn.getTextWindow().output("Please enter a number from list:");
-        cn.getTextWindow().setCursorPosition(0,2);
-        cn.getTextWindow().output("1-Start Game");
-        cn.getTextWindow().setCursorPosition(0,3);
-        cn.getTextWindow().output("2-High Score Table");
-        cn.getTextWindow().setCursorPosition(0,4);
-        cn.getTextWindow().output("3-Quit game");
-        boolean choice =true;
-        while(choice) {
-            if (keypr == 1) {    // if keyboard button pressed
-                if (rkey == KeyEvent.VK_1 ) {
-                    cn.getTextWindow().output(15, 1, (char) rkey);
-                }
-                else if (rkey == KeyEvent.VK_2){
-                    // High Score Table
-                }
-                else if (rkey == KeyEvent.VK_3){
-                    // Quit
-                }
-                else cn.getTextWindow().output((char) rkey);
-                if (rkey == KeyEvent.VK_ENTER) {
-                        for (int i = 0; i < 6; i++) {
-                            cn.getTextWindow().output(0, i, ' ');
-                        }
-                        choice=false;
-                    }
-                }
-                keypr=0;
-        }*/
-
-
-
-
-
-        char[] numbers = {'1','2','3','4'};
-
-        // Fill map with 1,2,3,4
-        Random rand = new Random(4523);
-        for (int i =0; i < 19; i+=2){
-            for (int j =0; j<29; j+=2){
-                int index = rand.nextInt(0,4);
-                map[i][j] =numbers[index];
-            }
-        }
-
+        char[][] map = Map.map;
         int round=0;
         cn.getTextWindow().setCursorPosition(35,0);
-        cn.getTextWindow().output("Board Seed: "+ 4523);
+        cn.getTextWindow().output("Board Seed: "+Map.seed);
         cn.getTextWindow().setCursorPosition(35,1);
         cn.getTextWindow().output("Round: "+round);
         cn.getTextWindow().setCursorPosition(35,2);
@@ -117,49 +53,91 @@ public class Game {
         cn.getTextWindow().setCursorPosition(35,4);
         cn.getTextWindow().output("Table: ");
 
-
-        int x=1,y=0;
-        cn.getTextWindow().output(x,y,'_');
-
-        printMap();
-
+        int px=1,py=0;
+        map[py][px]='|';
+        cn.getTextWindow().output(px, py, '|');
+        boolean gameover=false;
         while(!gameover) {
-
-            if(keypr==1) {    // if keyboard button pressed
-                if(rkey==KeyEvent.VK_LEFT && x > 0 && (map[y][x-1] == 0 || map[y][x-1] == '+' )) x--;
-                if(rkey==KeyEvent.VK_RIGHT && x < 32 &&  (map[y][x+1] == 0 || map[y][x+1] == '+' )) x++;
-                if(rkey==KeyEvent.VK_UP && y > 0 && (map[y-1][x] == 0 || map[y-1][x] == '+' )) y--;
-                if(rkey==KeyEvent.VK_DOWN && y < 20 && (map[y+1][x] == 0 || map[y+1][x] == '+' )) y++;
-
-                char rckey=(char)rkey;
-                //        left          right          up            down
-                if(rckey=='%' || rckey=='\'' || rckey=='&' || rckey=='(') cn.getTextWindow().output(x,y,'_'); // VK kullanmadan test teknigi
-                else cn.getTextWindow().output(rckey);
-
-                if(rkey==KeyEvent.VK_SPACE) {
-
-                    if (map[y][x] == '+') {
-                        map[y][x] = 0;
-                        cn.getTextWindow().output(x, y, ' ');
-                        int[] position = {x,y};
-                        removePlus(position);
+            if (keypr == 1) {    // if keyboard button pressed
+                if(map[py][px] == ' ' || map[py][px]=='|') {
+                    map[py][px] = ' ';
+                    cn.getTextWindow().output(px, py, ' ');
+                }
+                else if(map[py][px]=='+'){
+                    map[py][px]='+';
+                    cn.getTextWindow().output(px,py,'+',Red);
+                }
+                if (rkey == KeyEvent.VK_LEFT && px>0) {
+                    if(py%2!=0 && px-1==0){
+                        px--;
                     }
-                    else if (map[y][x] == 0){
-                        map[y][x] = '+';
-                        cn.getTextWindow().output(x, y, '+');
-                        // add to chain
-                        int[] position= {x,y};
-                        chain.add(position);
+                    else if(px-2>=0){
+                        px-=2;
                     }
                 }
+                if (rkey == KeyEvent.VK_RIGHT) {
+                    if(py%2!=0 && px<30 && px+1==30) {
+                        px++;
+                    }
+                    else if (px+2<=30) px+=2;
+                }
+                if (rkey == KeyEvent.VK_UP && py>0) {
+                    if (px % 2 == 0 && map[py - 1][px] != ' ') {
+                        if (px - 1 > -1) {
+                            px--;
+                        } else px++;
+                    } else if (py - 1 % 2 != 0 && px % 2 != 0) {
+                        if (px - 1 > -1) {
+                            px++;
+                        } else px--;
+                    }
+                    py--;
+                }
+                if (rkey == KeyEvent.VK_DOWN && py<18) {
+                    if(px%2==0 && map[py+1][px]!=' ') {
+                        if (px - 1 > -1) {
+                            px--;
+                        } else px++;
+                    }
+                    else if(py+1%2!= 0 && px%2!=0){
+                        if (px-1 > -1) {
+                            px++;
+                        } else px --;
+                    }
+                    py++;
+                }
+                int correctness = 0;
+                int x= 0;
+                int y = 0;
+                //Add +
+                if (rkey == KeyEvent.VK_SPACE) {
+                    if (map[py][px] == '+') {
+                        cn.getTextWindow().output(px, py, ' ');
+                        map[py][px] = ' ';
+                        if (correctness==0){
+                            x= px;
+                            y= py;
+                            correctness++;
+                        }
+                    }
+                    else {
+                        map[py][px] = '+';
+                        cn.getTextWindow().output(px, py, '+',Red);
+                    }
+                }
+
+                //Enter
                 if (rkey == KeyEvent.VK_ENTER){
                     round++;
                     cn.getTextWindow().setCursorPosition(35,1);
                     cn.getTextWindow().output("Round: "+round);
-                    newRound();
-                    printMap();
-                    cn.getTextWindow().output(x,y,'_');
+                    if (!ChainTruth(x,y)){
+                        gameover = true;
+                        cn.getTextWindow().setCursorPosition(35,8);
+                        cn.getTextWindow().output("Game over!");
+                    }
                 }
+
                 //Quit
                 if (rkey == KeyEvent.VK_E) {
                     for(int i=0;i<31;i++){
@@ -174,181 +152,435 @@ public class Game {
                     gameover=true;
                 }
 
-                keypr=0;    // last action
+                char rckey = (char) rkey;
+                //        left          right          up            down
+                if (rckey == '%' || rckey == '\'' || rckey == '&' || rckey == '(') {
+                    cn.getTextWindow().output(px, py, '|');
+                }
+
+                //Output for +
+                if(map[py][px]=='+') {
+                    cn.getTextWindow().output(px, py, '|');
+                }
+                else{
+                    map[py][px] = '|';
+                    cn.getTextWindow().output(px, py, '|');
+                }
+
+
+                keypr = 0;    // last action
             }
-            Thread.sleep(200);
+            Thread.sleep(20);
         }
     }
 
-
-
-    private void newRound() {
-
-        if (controlChain()){
-            // add to table
-            updateBoard();
-            chain.setHead(null); //resetting head
-        }
-        else{
-            gameover = true;
-            cn.getTextWindow().setCursorPosition(40,15);
-            cn.getTextWindow().output("Error in chain \n                                     - Game Over - ");
-        }
-    }
-
-    static void printMap(){
-        // change printing for enigma
-        for (int i=0; i<19; i++){
-            for (int j=0; j<31; j++){
-                if (map[i][j]!=0)
-                    cn.getTextWindow().output(j,i, map[i][j]);
-                else
-                    cn.getTextWindow().output(j,i,' ');
-            }
-        }
-    }
-
-    boolean controlChain(){
+    public boolean ChainTruth (int x, int y) {
+        SingleLinkedList sll = new SingleLinkedList();
         boolean flag = true;
-        int plusCounter = 0;
-        Node temp = chain.getHead(); // {x,y}
-
-        // for more than 1 plus
-        while(temp.getLink()!=null){
-            if (temp.getData() == null ) {
-                temp = temp.getLink();
-                continue;
-            }
-            int x = ((int[])  temp.getData())[0];
-            int y = ((int[])  temp.getData())[1];
-            if (y % 2 == 0){
-                // numbers are on right and left side.
-
-                int diff = Math.abs(Character.getNumericValue(map[y][x-1]) - Character.getNumericValue(map[y][x+1]));
-                if (diff != 1)
-                    flag = false;
-                if (plusCount(y,x-1) != 2){
-                    plusCounter++;
-                }
-                if (plusCount(y,x+1) != 2){
-                    plusCounter++;
-                }
-
-            }
-            else{
-                int diff = Math.abs(Character.getNumericValue(map[y-1][x]) - Character.getNumericValue(map[y+1][x]));
-                if (diff != 1)
-                    flag = false;
-                if (plusCount(y-1,x) != 2 ){
-                    plusCounter++;
-                }
-                if (plusCount(y+1,x) != 2){
-                    plusCounter++;
+        int correctnes = 0;
+        int whichturn=0;
+        if (y%2 == 0){
+            if (y>=2 && x >= 1 && x <= 29){
+                if (Map.map[y-1][x-1] == '+') {
+                    if (Math.abs(Map.map[y - 2][x - 1] - Map.map[y][x - 1]) == 1) {
+                        sll.add(Map.map[y][x + 1]);
+                        sll.add(Map.map[y][x - 1]);
+                        whichturn = 0;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
                 }
             }
-            temp=temp.getLink();
+            if (y>=2 && x >= 1 && x <= 29 ){
+                if (Map.map[y-1][x+1] == '+') {
+                    if (Math.abs(Map.map[y - 2][x + 1] - Map.map[y][x + 1]) == 1) {
+                        sll.add(Map.map[y][x - 1]);
+                        sll.add(Map.map[y][x + 1]);
+                        whichturn = 1;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
+            if (x >= 3 && x <= 29){
+                if (Map.map[y][x-2] == '+') {
+                    if (Math.abs(Map.map[y][x - 3] - Map.map[y][x - 1]) == 1) {
+                        sll.add(Map.map[y][x + 1]);
+                        sll.add(Map.map[y][x - 1]);
+                        whichturn = 2;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
+            if (x >= 1 && x <= 27){
+                if (Map.map[y][x+2] == '+' ) {
+                    if (Math.abs(Map.map[y][x + 3] - Map.map[y][x + 1]) == 1) {
+                        sll.add(Map.map[y][x - 1]);
+                        sll.add(Map.map[y][x + 1]);
+                        whichturn = 3;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
+            if (y<=16 && x >= 1 && x <= 29){
+                if (Map.map[y+1][x-1] == '+') {
+                    if (Math.abs(Map.map[y + 2][x - 1] - Map.map[y][x + 1]) == 1) {
+                        sll.add(Map.map[y][x + 1]);
+                        sll.add(Map.map[y][x - 1]);
+                        whichturn = 4;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
+            if ( y>=16 && x >= 1 && x <= 29) {
+                if (Map.map[y + 1][x + 1] == '+') {
+                    if (Math.abs(Map.map[y + 2][x + 1] - Map.map[y][x + 1]) == 1) {
+                        sll.add(Map.map[y][x - 1]);
+                        sll.add(Map.map[y][x + 1]);
+                        whichturn = 5;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
         }
-
-        // checking last (or only) plus
-        if (temp.getLink() == null && temp.getData() != null){
-            int x = ((int[])  temp.getData())[0];
-            int y = ((int[])  temp.getData())[1];
-            int diff;
-            if (y % 2 == 0){
-                // numbers are on right and left side.
-                diff = Math.abs(Character.getNumericValue(map[y][x - 1]) - Character.getNumericValue(map[y][x + 1]));
+        if (y%2 == 1){
+            if (y>=3 && x >= 1 && y <= 17){
+                if (Map.map[y-2][x] == '+') {
+                    if (Math.abs(Map.map[x][y - 3] - Map.map[y - 1][x]) == 1) {
+                        sll.add(Map.map[y + 1][x]);
+                        sll.add(Map.map[y - 1][x]);
+                        whichturn = 6;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
             }
-            else{
-
-                diff = Math.abs(Character.getNumericValue(map[y - 1][x]) - Character.getNumericValue(map[y + 1][x]));
-
+            if ( y>=1 && x >= 2 && y <= 17){
+                if (Map.map[y-1][x-1] == '+') {
+                    if (Math.abs(Map.map[y - 1][x] - Map.map[y - 1][x - 2]) == 1) {
+                        sll.add(Map.map[y + 1][x]);
+                        sll.add(Map.map[y - 1][x]);
+                        whichturn = 7;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
             }
-            if (diff != 1)
-                flag = false;
+            if (y>=1 && x <= 28 && y <= 17){
+                if (Map.map[y-1][x+1] == '+') {
+                    if (Math.abs(Map.map[y - 1][x] - Map.map[y - 1][x + 2]) == 1) {
+                        sll.add(Map.map[y + 1][x]);
+                        sll.add(Map.map[y - 1][x]);
+                        whichturn = 8;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
+            if (y>=1 && x >= 2 && y <= 17){
+                if (Map.map[y+1][x-1] == '+') {
+                    if (Math.abs(Map.map[y + 1][x] - Map.map[y + 1][x - 2]) == 1) {
+                        sll.add(Map.map[y - 1][x]);
+                        sll.add(Map.map[y + 1][x]);
+                        whichturn = 9;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
+            if (y>=1 && x >= 28 && y <= 17){
+                if (Map.map[y+1][x+1] == '+') {
+                    if (Math.abs(Map.map[y + 1][x] - Map.map[y + 1][x + 2]) == 1) {
+                        sll.add(Map.map[y - 1][x]);
+                        sll.add(Map.map[y + 1][x]);
+                        whichturn = 10;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
+            if ( y>=1 && y <= 15){
+                if (Map.map[y+2][x] == '+') {
+                    if (Math.abs(Map.map[y + 3][x] - Map.map[y + 1][x]) == 1) {
+                        sll.add(Map.map[y - 1][x]);
+                        sll.add(Map.map[y + 1][x]);
+                        whichturn = 11;
+                    } else {
+                        flag = false;
+                    }
+                    correctnes++;
+                }
+            }
         }
-
-        if (plusCounter>1){
+        if (correctnes != 1){
             flag = false;
         }
+        if (whichturn == 0){
+            x = x-1;
+            y = y-1;
+        }
+        if (whichturn == 1){
+            x = x+1;
+            y = y-1;
+        }
+        if (whichturn == 2){
+            x = x-2;
+        }
+        if (whichturn == 3){
+            x = x+2;
+        }
+        if (whichturn == 4){
+            x = x-1;
+            y = y+1;
+        }
+        if (whichturn == 5){
+            x = x+1;
+            y = y+1;
+        }
+        if (whichturn == 6){
+            y = y-2;
+        }
+        if (whichturn == 7){
+            x = x-1;
+            y = y-1;
+        }
+        if (whichturn == 8){
+            x = x+1;
+            y = y-1;
+        }
+        if (whichturn == 9){
+            x = x-1;
+            y = y+1;
+        }
+        if (whichturn == 10){
+            x = x+1;
+            y = y+1;
+        }
+        if (whichturn == 11){
+            y = y-2;
+        }
 
+        while(true){
+            if (whichturn == 0 || whichturn == 1 || whichturn == 6){
+                if (y>=3 && x >= 1 && y <= 17){
+                    if (Map.map[y-2][x] == '+') {
+                        if (Math.abs(Map.map[x][y - 3] - Map.map[y - 1][x]) == 1) {
+                            sll.add(Map.map[y + 1][x]);
+                            sll.add(Map.map[y - 1][x]);
+                            whichturn = 6;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if ( y>=1 && x >= 2 && y <= 17){
+                    if (Map.map[y-1][x-1] == '+') {
+                        if (Math.abs(Map.map[y - 1][x] - Map.map[y - 1][x - 2]) == 1) {
+                            sll.add(Map.map[y + 1][x]);
+                            sll.add(Map.map[y - 1][x]);
+                            whichturn = 7;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (y>=1 && x <= 28 && y <= 17){
+                    if (Map.map[y-1][x+1] == '+') {
+                        if (Math.abs(Map.map[y - 1][x] - Map.map[y - 1][x + 2]) == 1) {
+                            sll.add(Map.map[y + 1][x]);
+                            sll.add(Map.map[y - 1][x]);
+                            whichturn = 8;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (whichturn == 6){
+                    y = y-2;
+                }
+                if (whichturn == 7){
+                    x = x-1;
+                    y = y-1;
+                }
+                if (whichturn == 8){
+                    x = x+1;
+                    y = y-1;
+                }
+            }
+            else if (whichturn == 2 || whichturn == 7 || whichturn == 9){
+                if (y>=2 && x >= 1 && x <= 29){
+                    if (Map.map[y-1][x-1] == '+') {
+                        if (Math.abs(Map.map[y - 2][x - 1] - Map.map[y][x - 1]) == 1) {
+                            sll.add(Map.map[y][x + 1]);
+                            sll.add(Map.map[y][x - 1]);
+                            whichturn = 0;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (x >= 3 && x <= 29){
+                    if (Map.map[y][x-2] == '+') {
+                        if (Math.abs(Map.map[y][x - 3] - Map.map[y][x - 1]) == 1) {
+                            sll.add(Map.map[y][x + 1]);
+                            sll.add(Map.map[y][x - 1]);
+                            whichturn = 2;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (y<=16 && x >= 1 && x <= 29){
+                    if (Map.map[y+1][x-1] == '+') {
+                        if (Math.abs(Map.map[y + 2][x - 1] - Map.map[y][x + 1]) == 1) {
+                            sll.add(Map.map[y][x + 1]);
+                            sll.add(Map.map[y][x - 1]);
+                            whichturn = 4;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (whichturn == 0){
+                    x = x-1;
+                    y = y-1;
+                }
+                if (whichturn == 2){
+                    x = x-2;
+                }
+                if (whichturn == 4){
+                    x = x-1;
+                    y = y+1;
+                }
+            }
+            else if (whichturn == 3|| whichturn == 8 || whichturn == 10){
+                if (y>=2 && x >= 1 && x <= 29 ){
+                    if (Map.map[y-1][x+1] == '+') {
+                        if (Math.abs(Map.map[y - 2][x + 1] - Map.map[y][x + 1]) == 1) {
+                            sll.add(Map.map[y][x - 1]);
+                            sll.add(Map.map[y][x + 1]);
+                            whichturn = 1;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (x >= 1 && x <= 27){
+                    if (Map.map[y][x+2] == '+' ) {
+                        if (Math.abs(Map.map[y][x + 3] - Map.map[y][x + 1]) == 1) {
+                            sll.add(Map.map[y][x - 1]);
+                            sll.add(Map.map[y][x + 1]);
+                            whichturn = 3;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if ( y>=16 && x >= 1 && x <= 29) {
+                    if (Map.map[y + 1][x + 1] == '+') {
+                        if (Math.abs(Map.map[y + 2][x + 1] - Map.map[y][x + 1]) == 1) {
+                            sll.add(Map.map[y][x - 1]);
+                            sll.add(Map.map[y][x + 1]);
+                            whichturn = 5;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (whichturn == 1){
+                    x = x+1;
+                    y = y-1;
+                }
+                if (whichturn == 3){
+                    x = x+2;
+                }
+                if (whichturn == 5){
+                    x = x+1;
+                    y = y+1;
+                }
+            }
+            else if (whichturn == 4 || whichturn == 5 || whichturn == 11){
+                if (y>=1 && x >= 2 && y <= 17){
+                    if (Map.map[y+1][x-1] == '+') {
+                        if (Math.abs(Map.map[y + 1][x] - Map.map[y + 1][x - 2]) == 1) {
+                            sll.add(Map.map[y - 1][x]);
+                            sll.add(Map.map[y + 1][x]);
+                            whichturn = 9;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (y>=1 && x >= 28 && y <= 17){
+                    if (Map.map[y+1][x+1] == '+') {
+                        if (Math.abs(Map.map[y + 1][x] - Map.map[y + 1][x + 2]) == 1) {
+                            sll.add(Map.map[y - 1][x]);
+                            sll.add(Map.map[y + 1][x]);
+                            whichturn = 10;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if ( y>=1 && y <= 15){
+                    if (Map.map[y+2][x] == '+') {
+                        if (Math.abs(Map.map[y + 3][x] - Map.map[y + 1][x]) == 1) {
+                            sll.add(Map.map[y - 1][x]);
+                            sll.add(Map.map[y + 1][x]);
+                            whichturn = 11;
+                        } else {
+                            flag = false;
+                        }
+                        correctnes++;
+                    }
+                }
+                if (whichturn == 9){
+                    x = x-1;
+                    y = y+1;
+                }
+                if (whichturn == 10){
+                    x = x+1;
+                    y = y+1;
+                }
+                if (whichturn == 11){
+                    y = y-2;
+                }
+            }
+            if (correctnes != 0 || correctnes!= 1){
+                flag = false;
+            }
+            if (correctnes == 0){
+                break;
+            }
+        }
         return flag;
     }
-    void updateBoard(){
-        Node temp = chain.getHead(); // {x,y}
-
-        while (temp.getLink() != null){
-            if (temp.getData() == null ) {
-                temp = temp.getLink();
-                continue;
-            }
-            changeMap(temp);
-            temp = temp.getLink();
-        }
-        if (temp.getLink() == null && temp.getData() != null){
-            changeMap(temp);
-        }
-    }
-
-    private void changeMap(Node temp) {
-        int x = ((int[])  temp.getData())[0];
-        int y = ((int[])  temp.getData())[1];
-        map[y][x] = 0;
-        cn.getTextWindow().output(x,y,' ');
-        if (y % 2 == 0){
-            // numbers are on right and left side.
-            map[y][x-1] = '.';
-            map[y][x+1] = '.';
-            cn.getTextWindow().output(x-1,y,'.');
-            cn.getTextWindow().output(x+1,y,'.');
-
-        }
-        else{
-            map[y-1][x] = '.';
-            map[y+1][x] = '.';
-            cn.getTextWindow().output(x,y-1,'.');
-            cn.getTextWindow().output(x,y+1,'.');
-
-        }
-    }
-
-    public static int plusCount(int y, int x){
-        int count = 0;
-        if (y - 1 > -1 && map[y - 1][x] == '+')    //up
-            count++;
-        if (y + 1 < 20 && map[y + 1][x] == '+')  //down
-            count++;
-        if (x - 1 > -1 && map[y][x - 1] == '+')    //left
-            count++;
-        if (x + 1 < 32 && map[y][x + 1] == '+')   //right
-            count++;
-
-        return count;
-    }
-
-    public void removePlus(int[] position) {
-        Node temp = chain.getHead();
-        SingleLinkedList tempSLL = new SingleLinkedList();
-        while (temp.getLink() != null){
-            int tempX = ((int[]) temp.getData())[0];
-            int tempY = ((int[]) temp.getData())[1];
-            if (temp.getData() == null ||  tempX ==  position[0] || tempY == position[1]) {
-                temp = temp.getLink();
-                continue;
-            }
-            else{
-                tempSLL.add(temp.getData());
-            }
-
-            temp = temp.getLink();
-        }
-        if (temp.getLink() == null)
-        {
-            if (temp.getData() != position ){
-                tempSLL.add(temp.getData());
-            }
-
-        }
-        chain = tempSLL;
-    }
-
 }
+
+
