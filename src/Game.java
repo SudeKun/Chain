@@ -5,7 +5,7 @@ import enigma.console.TextAttributes;
 import java.awt.Color;
 
 public class Game {
-    public enigma.console.Console cn = Enigma.getConsole("Chain",100,40,22,15);
+    public enigma.console.Console cn = Enigma.getConsole("Chain",80,40,20,15);
     public static TextAttributes Red = new TextAttributes(Color.RED);
     public KeyListener klis;
 
@@ -18,7 +18,7 @@ public class Game {
     static SingleLinkedList chain = new SingleLinkedList();
 
     boolean gameover=false;
-    public int score=0;
+    public int score=0, x,y;
     public int plusCounter;
 
     Game() throws Exception {
@@ -45,8 +45,6 @@ public class Game {
       }
       keypr=0;
    }*/
-
-
         int round=0;
         cn.getTextWindow().setCursorPosition(35,0);
         cn.getTextWindow().output("Board Seed: "+Map.seed);
@@ -59,8 +57,9 @@ public class Game {
         cn.getTextWindow().setCursorPosition(35,4);
         cn.getTextWindow().output("Table: ");
 
-        int x=1,y=0;
-        map[y][x]='|';
+        x = 1;
+        y = 0;
+        map[y][x] = '|';
         cn.getTextWindow().output(x, y, '|');
 
         while(!gameover) {
@@ -136,15 +135,6 @@ public class Game {
                 }
                 //Quit
                 if (rkey == KeyEvent.VK_E) {
-                    for(int i=0;i<31;i++){
-                        for(int j=0;j<20;j++){
-                            map[j][i]=' ';
-                            cn.getTextWindow().output(i, j,' ');
-                        }
-                    }
-                    cn.getTextWindow().setCursorPosition(0,0);
-                    cn.getTextWindow().output("Quited");
-                    Thread.sleep(1000);
                     gameover=true;
                 }
 
@@ -166,7 +156,14 @@ public class Game {
             }
             Thread.sleep(200);
         }
+        if (gameover){
+            reset();
+            cn.getTextWindow().setCursorPosition(0,0);
+            cn.getTextWindow().output("Game over");
+            Thread.sleep(2000);
+        }
     }
+
     private void newRound() {
 
         if (controlChain()){
@@ -326,6 +323,20 @@ public class Game {
             score+= ( (chain.size()+1)*(chain.size()+1) );
             cn.getTextWindow().setCursorPosition(35,2);
             cn.getTextWindow().output("Score: "+score);
+        }
+    }
+
+    public void reset(){
+        for(int i=35;i<75;i++){
+            for(int j=0;j<35;j++){
+                cn.getTextWindow().output(i, j,' ');
+            }
+        }
+        for(int i=0;i<31;i++){
+            for(int j=0;j<20;j++){
+                map[j][i]=' ';
+                cn.getTextWindow().output(i, j,' ');
+            }
         }
     }
 
