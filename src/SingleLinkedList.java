@@ -48,8 +48,6 @@ public class SingleLinkedList{
         }
     }
 
-
-
     public void display(){
         if(head==null){
             System.out.println("linked list is empty");
