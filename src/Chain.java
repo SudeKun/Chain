@@ -20,7 +20,7 @@ public class Chain {
             // add to table
             score();
             updateBoard();
-            chain.setHead(null); //resetting head
+             //resetting head
         }
         else{
             Game.gameover = true;
@@ -29,12 +29,15 @@ public class Chain {
             cn.getTextWindow().setCursorPosition(10,25);
             cn.getTextWindow().output("- Game Over -");
         }
+        chain.setHead(null);
     }
     public boolean controlChain(){
         boolean flag = true;
         plusCounter = 0;
         Node temp = chain.getHead(); // {x,y}
+        if (chain.size()<3) flag=false;
 
+        SingleLinkedList tempSLL = new SingleLinkedList();
         // for more than 1 plus
         while(temp.getLink()!=null){
             if (temp.getData() == null ) {
@@ -45,8 +48,11 @@ public class Chain {
             int y = ((int[])  temp.getData())[1];
             if (y % 2 == 0){
                 // numbers are on right and left side.
-
-                int diff = Math.abs(Character.getNumericValue(map[y][x-1]) - Character.getNumericValue(map[y][x+1]));
+                int firstValue = Character.getNumericValue(map[y][x-1]);
+                int secondValue = Character.getNumericValue(map[y][x+1]);
+                tempSLL.add(firstValue);
+                tempSLL.add(secondValue);
+                int diff = Math.abs(firstValue - secondValue);
                 if (diff != 1)
                     flag = false;
                 if (plusCount(y,x-1) != 2){
@@ -55,10 +61,14 @@ public class Chain {
                 if (plusCount(y,x+1) != 2){
                     plusCounter++;
                 }
-
             }
+
             else{
-                int diff = Math.abs(Character.getNumericValue(map[y-1][x]) - Character.getNumericValue(map[y+1][x]));
+                int firstValue = Character.getNumericValue(map[y-1][x]);
+                int secondValue = Character.getNumericValue(map[y+1][x]);
+                tempSLL.add(firstValue);
+                tempSLL.add(secondValue);
+                int diff = Math.abs(firstValue - secondValue);
                 if (diff != 1)
                     flag = false;
                 if (plusCount(y-1,x) != 2 ){
@@ -68,6 +78,7 @@ public class Chain {
                     plusCounter++;
                 }
             }
+
             temp=temp.getLink();
         }
 
@@ -78,11 +89,18 @@ public class Chain {
             int diff;
             if (y % 2 == 0){
                 // numbers are on right and left side.
-                diff = Math.abs(Character.getNumericValue(map[y][x - 1]) - Character.getNumericValue(map[y][x + 1]));
+                int firstValue = Character.getNumericValue(map[y][x-1]);
+                int secondValue = Character.getNumericValue(map[y][x+1]);
+                tempSLL.add(firstValue);
+                tempSLL.add(secondValue);
+                diff = Math.abs(firstValue - secondValue);
             }
             else{
-
-                diff = Math.abs(Character.getNumericValue(map[y - 1][x]) - Character.getNumericValue(map[y + 1][x]));
+                int firstValue = Character.getNumericValue(map[y-1][x]);
+                int secondValue = Character.getNumericValue(map[y+1][x]);
+                tempSLL.add(firstValue);
+                tempSLL.add(secondValue);
+                diff = Math.abs(firstValue - secondValue);
 
             }
             if (diff != 1)
@@ -91,6 +109,19 @@ public class Chain {
 
         if (plusCounter>1){
             flag = false;
+        }
+
+        else if (flag){
+            String round = Integer.toString(Game.round);
+            Game.table.addCoulmn(round);
+            Node tempHead = tempSLL.getHead();
+            Game.table.addLine(round, tempHead.getData().toString());
+            tempHead = tempHead.getLink();
+            while (tempHead.getLink() != null) {
+                Game.table.addLine(round, tempHead.getData().toString());
+                tempHead = tempHead.getLink().getLink();
+            }
+            Game.table.addLine(round, tempHead.getData().toString());
         }
 
         return flag;
@@ -144,29 +175,7 @@ public class Chain {
         return count;
     }
     public void removePlus(int[] position) {
-        Node temp = chain.getHead();
-        SingleLinkedList tempSLL = new SingleLinkedList();
-        while (temp.getLink() != null){
-            int temx = ((int[]) temp.getData())[0];
-            int temy = ((int[]) temp.getData())[1];
-            if (temp.getData() == null ||  temx ==  position[0] || temy == position[1]) {
-                temp = temp.getLink();
-                continue;
-            }
-            else{
-                tempSLL.add(temp.getData());
-            }
-
-            temp = temp.getLink();
-        }
-        if (temp.getLink() == null)
-        {
-            if (temp.getData() != position ){
-                tempSLL.add(temp.getData());
-            }
-
-        }
-        chain = tempSLL;
+        chain.delete(position);
     }
     public void score(){
         if(plusCounter==1){
@@ -175,5 +184,5 @@ public class Chain {
             cn.getTextWindow().output("Score: "+Game.score);
         }
     }
-
+   
 }

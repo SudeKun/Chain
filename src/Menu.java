@@ -5,9 +5,11 @@ public class Menu {
     public static String choice;
     public static String p_seed;
     public static boolean gameon=true;
+    public static String username;
 
     Menu() throws Exception {
         while (gameon) {
+            clear_screen();
             cn.getTextWindow().setCursorPosition(0, 0);
             cn.getTextWindow().output("Welcome to Chain Game!");
             cn.getTextWindow().setCursorPosition(0, 1);
@@ -22,36 +24,49 @@ public class Menu {
             choice = cn.readLine();
             switch (choice) {
                 case "1":
-                    for (int i = 0; i < 40; i++) {
-                        for (int j = 0; j < 40; j++) {
-                            cn.getTextWindow().output(i, j, ' ');
-                        }
-                    }
+                    clear_screen();
                     cn.getTextWindow().setCursorPosition(0,0);
                     cn.getTextWindow().output("Please enter seed:");
                     cn.getTextWindow().setCursorPosition(19,0);
                     p_seed=cn.readLine();
+                    if (p_seed.isEmpty()) p_seed="0";
                     Map.seed=Long.parseLong(p_seed);
+                    cn.getTextWindow().setCursorPosition(0,2);
+                    cn.getTextWindow().output("Please enter your name:");
+                    cn.getTextWindow().setCursorPosition(23,2);
+                    username=cn.readLine();
                     new Map();
                     new Game();
+                    Game.round=0;
+                    Game.gameover=false;
                     break;
                 case "2":
+                    clear_screen();
+                    if(Game.map!=null) Game.reset();
+                	cn.getTextWindow().setCursorPosition(0, 0);
+        			Game.hstable.displaytable();
+                    cn.readLine();
+                    gameon=true;
                     break;
                 case "3":
                     gameon=false;
                     System.exit(0);
                     break;
                 default:
-                    for (int i = 0; i < 40; i++) {
-                        for (int j = 0; j < 40; j++) {
-                            cn.getTextWindow().output(i, j, ' ');
-                        }
-                    }
+                    clear_screen();
                     cn.getTextWindow().setCursorPosition(0,0);
                     cn.getTextWindow().output("Please enter a number between 1-3");
                     gameon=true;
+                    break;
             }
         }
         
+    }
+    static public void clear_screen(){
+        for (int i = 0; i < 80; i++) {
+            for (int j = 0; j < 40; j++) {
+                cn.getTextWindow().output(i, j, ' ');
+            }
+        }
     }
 }

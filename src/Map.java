@@ -18,6 +18,7 @@ public class Map {
     private void create(int howMany, char what) {
         int count = 0;
         int x, y;
+        //Map.seed
         if(seed==0){
             seed=random_seed.nextLong(0,10000);
         }
@@ -44,11 +45,7 @@ public class Map {
     public Map() {
         map = new char[20][31];
 
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length; j++) {
-                map[i][j] = ' ';
-            }
-        }
+        delete();
 
         create(40,'1');
         create(40,'2');
@@ -61,5 +58,13 @@ public class Map {
             }
         }
 
+    }
+
+    public static void delete(){
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                map[i][j]=' ';
+            }
+        }
     }
 }

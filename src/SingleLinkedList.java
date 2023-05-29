@@ -19,14 +19,14 @@ public class SingleLinkedList{
         }
     }
 
-    public void delete(Object dataToDelete) {
+    public void delete(int[] data) {
         if(head == null) {
             System.out.println("Linked list is empty");
             return;
         }
 
         // Delete nodes at the beginning of the list that match dataToDelete
-        while(head != null && head.getData() == (dataToDelete)) {
+        while(head != null && ((int[]) head.getData())[0] == (data[0]) && ((int[]) head.getData())[1] == (data[1])) {
             head = head.getLink();
         }
 
@@ -34,7 +34,8 @@ public class SingleLinkedList{
         Node temp = head;
         Node previous = null;
         while(temp != null) {
-            if(temp.getData() == dataToDelete) {
+            int[] tempData = (int[]) temp.getData();
+            if(tempData[0] == data[0] && tempData[1] == data[1]){
                 System.out.println(" ");
                 if(previous == null) { // the matching node is the first node
                     head = temp.getLink();
@@ -47,6 +48,7 @@ public class SingleLinkedList{
             temp = temp.getLink();
         }
     }
+
 
     public void display(){
         if(head==null){
